@@ -7,6 +7,7 @@ import AuthSocialButton from "./AuthSocialButton";
 import { useCallback, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { BsGithub, BsGoogle } from 'react-icons/bs';
+import axios from "axios";
 
 type Variant = 'LOGIN' | 'REGISTER';
 
@@ -48,12 +49,12 @@ export default function AuthForm() {
     //     }
     // };
 
-    function onSubmit(data: SubmitHandler<FieldValues>) {
+    function onSubmit(data: FieldValues) {
         // data is sent from the handleSubmit function we destructured from useForm
         setIsLoading(true);
 
         if(variant == 'REGISTER') {
-            // axios register
+            axios.post('/api/register', data)
         }
 
         if(variant === 'LOGIN') {
