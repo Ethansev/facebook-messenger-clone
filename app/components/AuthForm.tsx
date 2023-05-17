@@ -7,6 +7,8 @@ import AuthSocialButton from "./AuthSocialButton";
 import { useCallback, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { BsGithub, BsGoogle } from 'react-icons/bs';
+import { toast } from 'react-hot-toast';
+import { signIn } from "next-auth/react";
 import axios from "axios";
 
 type Variant = 'LOGIN' | 'REGISTER';
@@ -24,12 +26,8 @@ export default function AuthForm() {
         }
     }, [variant]);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<FieldValues>({
-        defaultValues: {
+    const {register, handleSubmit, formState: { errors }} = useForm<FieldValues>({
+        defaultValues: { 
             name: '',
             email: '',
             password: ''
@@ -55,10 +53,25 @@ export default function AuthForm() {
 
         if(variant == 'REGISTER') {
             axios.post('/api/register', data)
+            .catch(() => toast.error('Something went wrong!'))
+            .finally(() => setIsLoading(false));
         }
 
         if(variant === 'LOGIN') {
-            // NextAuth signin
+            signIn('credentials', { // function from next-auth
+                ...data,
+                redirect: false
+            })
+            .then((callback) => {
+                if(callback?.error) {
+                    toast.error('Invalid Credentials');
+                }
+
+                if(callback?.ok && !callback?.error) {
+                    toast.success('Logged in!');
+                }
+            })
+            .finally(() => setIsLoading(false));
         }
     }
 
@@ -69,9 +82,20 @@ export default function AuthForm() {
     // };
 
     function socialAction(action: string) {
+        // NextAuth social sign in
         setIsLoading(true);
 
-        // NextAuth social sign in
+        signIn(action, { redirect: false })
+        .then((callback) => {
+            if(callback?.error) {
+                toast.error('Invalid Credentials');
+            }
+
+            if(callback?.ok && !callback?.error) {
+                toast.success('Logged in!');
+            }
+        })
+        .finally(() => setIsLoading(false));
     }
 
     return (
@@ -103,7 +127,9 @@ export default function AuthForm() {
                             errors={errors} // from the useForm hook that we destructured
                             disabled={isLoading}
                         />
-                    )}
+                    )} 
+
+                    { /* these fields show regardless of whether it's for login/register */}
                     <Input 
                         id="email" 
                         label="Email Address"
