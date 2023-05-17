@@ -11,6 +11,8 @@ datasource db {
 }
 
 // might need to redo all these models
+
+// Prisma does not allow me to specify names for implicit many-to-many relation table columns yet :'(
 model User {
     id             Int       @id @default(autoincrement())
     name           String?
