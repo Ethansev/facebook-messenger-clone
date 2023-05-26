@@ -16,8 +16,7 @@ interface ConversationListProps {
 }
 
 export default function ConversationList(props: ConversationListProps) {
-    const { initialItems } = props; // these will be updated using Pusher which uses sockets to update the UI in real time, used for initial load
-    console.log({ initialItems })
+    const { initialItems } = props; // these will be updated using Pusher which uses web sockets to update the UI in real time, used for initial load
     const [items, setItems] = useState(initialItems);
 
     const router = useRouter();
