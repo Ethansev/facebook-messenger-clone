@@ -1,8 +1,8 @@
-import { useParams } from 'next/navigation'; // used to obtain current rout parameters
+import { useParams } from 'next/navigation'; // used to obtain current route parameters
 import { useMemo } from 'react';
 
 export default function useConversation() {
-    // basically we are using the current route to obtain the conversationId
+    // retrieving the conversationId from the current route
     const params = useParams();
     const conversationId = useMemo(() => {
         if(!params?.conversationId) {
